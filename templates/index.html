@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamentos de HTML5 — Cuaderno de anotaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">&lt;html5/&gt; cuaderno</span>
+  <nav>
+    <a href="#semantica">semántica</a>
+    <a href="#formularios">formularios</a>
+    <a href="#dibujo">canvas</a>
+    <a href="#media">media</a>
+    <a href="#apis">apis</a>
+  </nav>
+</div>
+
+<header class="hero">
+  <p class="eyebrow">demostración en vivo · Flask + static</p>
+  <h1>Fundamentos de <span>HTML5</span>, anotados como en el inspector</h1>
+  <p>Cada sección de abajo es un elemento real de la página, funcionando — no una captura de pantalla. Pasa el cursor (o toca) sobre las cajas punteadas para ver la anotación de cada etiqueta.</p>
+</header>
+
+<main>
+
+  <!-- ============ SEMÁNTICA ============ -->
+  <section class="feature" id="semantica">
+    <div class="feature-head">
+      <span class="tagchip">semántica</span>
+      <h2>El esqueleto de una página</h2>
+    </div>
+    <p class="feature-desc">HTML5 reemplazó el clásico <code>&lt;div id="header"&gt;</code> por etiquetas que describen su propio rol: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>. El navegador y los lectores de pantalla entienden la estructura sin depender de nombres de clase.</p>
+    <div class="stage">
+      <span class="stage-label">document.body</span>
+      <div class="skeleton">
+        <div class="sk-box sk-header" tabindex="0">&lt;header&gt;
+          <div class="sk-note">Título del sitio y branding. Aparece una sola vez por página (o por <code>&lt;article&gt;</code>).</div>
+        </div>
+        <div class="sk-box" tabindex="0">&lt;nav&gt;
+          <div class="sk-note">Bloque de enlaces de navegación principal. Los lectores de pantalla pueden saltar directo aquí.</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-box" tabindex="0">&lt;aside&gt;
+            <div class="sk-note">Contenido relacionado pero no esencial: barra lateral, notas, publicidad.</div>
+          </div>
+          <div class="sk-box" tabindex="0">&lt;main&gt;
+            <div class="sk-note">El contenido único de la página. Solo debe existir uno por documento.</div>
+          </div>
+          <div class="sk-box" tabindex="0">&lt;article&gt;
+            <div class="sk-note">Contenido independiente y autocontenido: un post, una noticia, una tarjeta de producto.</div>
+          </div>
+        </div>
+        <div class="sk-box" tabindex="0">&lt;footer&gt;
+          <div class="sk-note">Créditos, contacto o enlaces legales. Puede repetirse dentro de un <code>&lt;article&gt;</code> también.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FORMULARIOS ============ -->
+  <section class="feature" id="formularios">
+    <div class="feature-head">
+      <span class="tagchip">formularios</span>
+      <h2>Tipos de input nuevos + validación nativa</h2>
+    </div>
+    <p class="feature-desc">HTML5 añadió tipos de <code>&lt;input&gt;</code> que validan y renderizan controles específicos sin una sola línea de JavaScript: <code>email</code>, <code>range</code>, <code>date</code>, <code>color</code>. Prueba enviar el formulario con el correo vacío o mal escrito.</p>
+    <div class="stage">
+      <span class="stage-label">form.demo</span>
+      <form class="form-grid" id="demoForm">
+        <div class="field">
+          <label>Correo <span class="type">type="email" required</span></label>
+          <input type="email" name="correo" placeholder="tu@correo.com" required>
+        </div>
+        <div class="field">
+          <label>Fecha límite <span class="type">type="date"</span></label>
+          <input type="date" name="fecha">
+        </div>
+        <div class="field">
+          <label>Prioridad <span class="type">type="range"</span></label>
+          <input type="range" min="1" max="5" value="3" id="rango" oninput="rangoOut.textContent=this.value">
+          <span class="out">valor: <strong id="rangoOut">3</strong></span>
+        </div>
+        <div class="field">
+          <label>Color de etiqueta <span class="type">type="color"</span></label>
+          <input type="color" value="#7fffb0">
+        </div>
+        <div class="field full">
+          <label>Mensaje <span class="type">textarea</span></label>
+          <textarea rows="2" placeholder="Notas del proyecto…"></textarea>
+        </div>
+        <div class="field full">
+          <button type="submit" class="run">Validar y enviar</button>
+          <div class="out" id="formOut"></div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ CANVAS ============ -->
+  <section class="feature" id="dibujo">
+    <div class="feature-head">
+      <span class="tagchip">gráficos</span>
+      <h2>&lt;canvas&gt; — píxeles dibujados por código</h2>
+    </div>
+    <p class="feature-desc"><code>&lt;canvas&gt;</code> es un lienzo en blanco que se controla desde JavaScript con la API 2D. Aquí cada trazo se dibuja escuchando eventos del mouse o del dedo.</p>
+    <div class="stage">
+      <span class="stage-label">canvas 2d context</span>
+      <div class="draw-row">
+        <canvas id="lienzo" width="420" height="240"></canvas>
+        <div class="draw-controls">
+          <span>color</span>
+          <div class="swatches">
+            <span class="swatch active" style="background:#7FFFB0" data-color="#7FFFB0"></span>
+            <span class="swatch" style="background:#FFB454" data-color="#FFB454"></span>
+            <span class="swatch" style="background:#FF8FA3" data-color="#FF8FA3"></span>
+            <span class="swatch" style="background:#E7EDE9" data-color="#E7EDE9"></span>
+          </div>
+          <button class="mini" id="limpiar">limpiar lienzo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MEDIA / PROGRESS-METER ============ -->
+  <section class="feature" id="media">
+    <div class="feature-head">
+      <span class="tagchip">contenido</span>
+      <h2>&lt;progress&gt;, &lt;meter&gt; y &lt;details&gt;</h2>
+    </div>
+    <p class="feature-desc">Elementos de contenido nativos que antes requerían widgets hechos a mano: una barra de progreso, un medidor de rango con umbrales, y un desplegable sin JavaScript.</p>
+    <div class="stage">
+      <div class="media-row">
+        <div>
+          <span class="mini-label">&lt;progress value="70" max="100"&gt;</span>
+          <progress value="70" max="100"></progress>
+        </div>
+        <div>
+          <span class="mini-label">&lt;meter min="0" max="100" value="82" low="40" high="80" optimum="90"&gt;</span>
+          <meter min="0" max="100" value="82" low="40" high="80" optimum="90"></meter>
+        </div>
+      </div>
+      <div style="margin-top:1.4rem;">
+        <details>
+          <summary>&lt;details&gt;&lt;summary&gt; — ¿qué es esto?</summary>
+          <p>Un acordeón nativo del navegador. No necesita JavaScript ni CSS para expandirse: el propio HTML mantiene el estado abierto/cerrado.</p>
+        </details>
+        <details>
+          <summary>¿Por qué usarlo en vez de un div con onclick?</summary>
+          <p>Es accesible por teclado y para lectores de pantalla desde el primer momento, y sigue funcionando si el JavaScript falla en cargar.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APIS: localStorage ============ -->
+  <section class="feature" id="apis">
+    <div class="feature-head">
+      <span class="tagchip">web apis</span>
+      <h2>localStorage — memoria del navegador</h2>
+    </div>
+    <p class="feature-desc">HTML5 introdujo <code>localStorage</code>, una API de clave-valor que persiste incluso si cierras la pestaña. El contador de abajo guarda su valor real en tu navegador (recarga la página y sigue ahí).</p>
+    <div class="stage">
+      <div class="counter-row">
+        <button class="mini" id="menos">−1</button>
+        <span class="counter-num" id="contador">0</span>
+        <button class="mini" id="mas">+1</button>
+        <button class="mini" id="reset" style="margin-left:auto;">reiniciar</button>
+      </div>
+      <div class="out" style="margin-top:0.8rem;">clave: <strong>html5_demo_contador</strong> — persistida en <code>localStorage</code></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>demostración estática — sin envío de datos a ningún servidor</span>
+  <span>HTML5 · CSS3 · JS vanilla</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
